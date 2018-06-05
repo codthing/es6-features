@@ -26,7 +26,7 @@
 ###### constants
 - 常量（也称为“不可变变量”），即不能重新分配新内容的变量。注意：这只会使变量本身不可变，而不是它赋值的内容（例如，如果内容是一个对象，这意味着对象本身仍然可以被改变）。
 
-	```
+ ```
 const PI = 3.141593
 PI > 3.0
 ```
@@ -48,7 +48,7 @@ PI > 3.0;
 #### 1.块范围变量
 - 块范围的变量（和常量）没有提升。
 
-	```
+ ```
 for (let i = 0; i < a.length; i++) {
     let x = a[i]
     …
@@ -89,7 +89,7 @@ callbacks[2]() === 4;
 #### 2.块范围功能
 - 块范围的函数定义。
 
-	```
+ ```
 {
     function foo () { return 1 }
     foo() === 1
@@ -115,12 +115,12 @@ callbacks[2]() === 4;
 
 
 ### 三. 箭头函数
-##### arrow-functions
+###### arrow-functions
 
 #### 1.表达式
 - 更具表达性的闭包语法。
 
-	```
+ ```
 odds  = evens.map(v => v + 1)
 pairs = evens.map(v => ({ even: v, odd: v + 1 }))
 nums  = evens.map((v, i) => v + i)
@@ -134,7 +134,7 @@ nums  = evens.map(function (v, i) { return v + i; });
 #### 2.声明主体
 - 更具表达性的闭包语法。
 
-	```
+ ```
 nums.forEach(v => {
    if (v % 5 === 0)
        fives.push(v)
@@ -150,7 +150,7 @@ nums.forEach(function (v) {
 #### 3.词汇 this
 - 更直观地处理当前的对象上下文。
 
-	```
+ ```
 this.nums.forEach((v) => {
     if (v % 5 === 0)
         this.fives.push(v)
@@ -177,12 +177,12 @@ this.nums.forEach(function (v) {
 
 
 ### 四. 扩展参数处理
-##### extended-parameter-handling
+###### extended-parameter-handling
 
 #### 1.默认参数值
 - 简单直观的函数参数默认值。
 
-	```
+ ```
 function f (x, y = 7, z = 42) {
     return x + y + z
 }
@@ -202,7 +202,7 @@ f(1) === 50;
 #### 2.剩余参数
 - 将剩余参数聚合为可变参数函数的单个参数。
 
-	```
+ ```
 function f (x, y, ...a) {
     return (x + y) * a.length
 }
@@ -219,7 +219,7 @@ f(1, 2, "hello", true, 7) === 9;
 #### 3.传播运营商
 - 将可迭代集合（如数组或字符串）的元素扩展到文字元素和单个函数参数中。
 
-	```
+ ```
 var params = [ "hello", true, 7 ]
 var other = [ 1, 2, ...params ] // [ 1, 2, "hello", true, 7 ]
 function f (x, y, ...a) {
@@ -243,12 +243,12 @@ var chars = str.split(""); // [ "f", "o", "o" ]
 
 
 ### 五. 模板文字
-##### template-literals
+###### template-literals
 
 #### 1.字符串插值
 - 单行和多行字符串的直观表达式插值。（注意：不要混淆，Template Literals最初在ECMAScript 6语言规范的草稿中被命名为“Template Strings”）
 
-	```
+ ```
 var customer = { name: "Foo" }
 var card = { amount: 7, product: "Bar", unitprice: 42 }
 var message = `Hello ${customer.name},
@@ -266,7 +266,7 @@ var message = "Hello " + customer.name + ",\n" +
 #### 2.自定义插值
 - 任意方法的灵活表达式插值。
 
-	```
+ ```
 get`http://example.com/foo?bar=${bar + baz}&quux=${quux}`
 ```
 ```
@@ -276,7 +276,7 @@ get([ "http://example.com/foo?bar=", "&quux=", "" ],bar + baz, quux);
 #### 3.原始字符串访问
 - 访问原始模板字符串内容（反斜杠不解释）。
 
-```
+ ```
 function quux (strings, ...values) {
     strings[0] === "foo\n"
     strings[1] === "bar"
@@ -285,7 +285,6 @@ function quux (strings, ...values) {
     values[0] === 42
 }
 quux `foo\n${ 42 }bar`
-
 String.raw `foo\n${ 42 }bar` === "foo\\n42bar"
 ```
 ```
@@ -294,12 +293,12 @@ String.raw `foo\n${ 42 }bar` === "foo\\n42bar"
 
 
 ### 六. 扩展文字
-##### extended-literals
+###### extended-literals
 
 #### 1.二进制和八进制文字
 - 直接支持安全的二进制和八进制文字。
 
-```
+ ```
 0b111110111 === 503
 0o767 === 503
 ```
@@ -312,7 +311,7 @@ parseInt("767", 8) === 503;
 #### 2.Unicode字符串和RegExp Literal
 - 在字符串和正则表达式中使用Unicode的扩展支持。
 
-	```
+ ```
 "𠮷".length === 2
 "𠮷".match(/./u)[0].length === 2
 "𠮷" === "\uD842\uDFB7"
@@ -331,12 +330,12 @@ for (let codepoint of "𠮷") console.log(codepoint)
 
 
 ### 七. 增强的正则表达式
-##### enhanced-regular-expression
+###### enhanced-regular-expression
 
 #### 正则表达式粘滞匹配
 - 保持匹配位置在匹配之间保持粘性，这种方式支持对任意长输入字符串进行高效解析，即使使用任意数量的不同正则表达式。
 
-	```
+ ```
 let parser = (input, match) => {
     for (let pos = 0, lastPos = input.length; pos < lastPos; ) {
         for (let i = 0; i < match.length; i++) {
@@ -385,12 +384,12 @@ parser("Foo 1 Bar 7 Baz 42", [
 
 
 ### 八. 增强的对象属性
-##### enhanced-object-properties
+###### enhanced-object-properties
 
 #### 1.属性速记
 - 通用对象属性定义惯用语法的长度较短。
 
-	```
+ ```
 var x = 0, y = 0
 obj = { x, y }
 ```
@@ -402,7 +401,7 @@ obj = { x: x, y: y };
 #### 2.计算属性名称
 - 支持对象属性定义中的计算名称。
 
-	```
+ ```
 let obj = {
    foo: "bar",[ "baz" + quux() ]: 42
 }
@@ -417,7 +416,7 @@ obj[ "baz" + quux() ] = 42;
 #### 3.方法属性
 - 对于常规函数和生成器函数，支持对象属性定义中的方法符号。
 
-	```
+ ```
 obj = {
     foo (a, b) {
         …
@@ -445,12 +444,12 @@ obj = {
 
 
 ### 九. 解构赋值
-##### destructuring-assignment
+###### destructuring-assignment
 
 #### 1.数组匹配
 - 在分配过程中直观且灵活地将阵列解构成单个变量。
 
-	```
+ ```
 var list = [ 1, 2, 3 ]
 var [ a, , b ] = list
 [ b, a ] = [ a, b ]
@@ -464,7 +463,7 @@ var tmp = a; a = b; b = tmp;
 #### 2.对象匹配，速记符号
 - 在分配过程中直观且灵活地将对象解构成单个变量。
 
-	```
+ ```
 var { op, lhs, rhs } = getASTNode()
 ```
 ```
@@ -477,7 +476,7 @@ var rhs = tmp.rhs;
 #### 3.对象匹配，深度匹配
 - 在分配过程中直观且灵活地将对象解构成单个变量。
 
-	```
+ ```
 var { op: a, lhs: { op: b }, rhs: c } = getASTNode()
 ```
 ```
@@ -490,7 +489,7 @@ var c = tmp.rhs;
 #### 4.对象和数组匹配，默认值
 - 简单直观的默认值，用于解构对象和数组。
 
-	```
+ ```
 var obj = { a: 1 }
 var list = [ 1 ]
 var { a, b = 2 } = obj
@@ -508,7 +507,7 @@ var y = list[1] === undefined ? 2 : list[1];
 #### 5.参数上下文匹配
 - 在函数调用期间，将数组和对象直观且灵活地解构成单个参数。
 
-	```
+ ```
 function f ([ name, val ]) {
     console.log(name, val)
 }
@@ -546,7 +545,7 @@ h({ name: "bar", val: 42 });
 #### 6.失败软解构
 - 失效软解构，可选择默认值。
 
-	```
+ ```
 var list = [ 7, 42 ]
 var [ a = 1, b = 2, c = 3, d ] = list
 a === 7
