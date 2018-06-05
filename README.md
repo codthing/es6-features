@@ -565,3 +565,354 @@ c === 3;
 d === undefined;
 ```
 
+
+### 十. 模块
+###### modules
+
+#### 1.值导出/导入
+- 支持从/向模块输出/输入值，而不会造成全局命名空间污染。
+
+ ```
+//  lib/math.js
+export function sum (x, y) { return x + y }
+export var pi = 3.141593
+//  someApp.js
+import * as math from "lib/math"
+console.log("2π = " + math.sum(math.pi, math.pi))
+//  otherApp.js
+import { sum, pi } from "lib/math"
+console.log("2π = " + sum(pi, pi))
+```
+```
+//  lib/math.js
+LibMath = {};
+LibMath.sum = function (x, y) { return x + y };
+LibMath.pi = 3.141593;
+//  someApp.js
+var math = LibMath;
+console.log("2π = " + math.sum(math.pi, math.pi));
+//  otherApp.js
+var sum = LibMath.sum, pi = LibMath.pi;
+console.log("2π = " + sum(pi, pi));
+```
+
+#### 2.默认和通配符
+- 将值标记为默认导出值和值的质量混合。
+
+ ```
+//  lib/mathplusplus.js
+export * from "lib/math"
+export var e = 2.71828182846
+export default (x) => Math.exp(x)
+//  someApp.js
+import exp, { pi, e } from "lib/mathplusplus"
+console.log("e^{π} = " + exp(pi))
+```
+```
+//  lib/mathplusplus.js
+LibMathPP = {};
+for (symbol in LibMath)
+    if (LibMath.hasOwnProperty(symbol))
+        LibMathPP[symbol] = LibMath[symbol];
+LibMathPP.e = 2.71828182846;
+LibMathPP.exp = function (x) { return Math.exp(x) };
+//  someApp.js
+var exp = LibMathPP.exp, pi = LibMathPP.pi, e = LibMathPP.e;
+console.log("e^{π} = " + exp(pi));
+```
+
+
+### 十一. 类
+###### classes
+
+#### 1.类定义
+- 更直观，面向对象的风格和空模板的类。
+
+ ```
+class Shape {
+    constructor (id, x, y) {
+        this.id = id
+        this.move(x, y)
+    }
+    move (x, y) {
+        this.x = x
+        this.y = y
+    }
+}
+```
+```
+var Shape = function (id, x, y) {
+    this.id = id;
+    this.move(x, y);
+};
+Shape.prototype.move = function (x, y) {
+    this.x = x;
+    this.y = y;
+};
+```
+
+#### 2.类继承
+- 更直观，OOP风格和空模板继承。
+
+ ```
+class Rectangle extends Shape {
+    constructor (id, x, y, width, height) {
+        super(id, x, y)
+        this.width  = width
+        this.height = height
+    }
+}
+class Circle extends Shape {
+    constructor (id, x, y, radius) {
+        super(id, x, y)
+        this.radius = radius
+    }
+}
+```
+```
+var Rectangle = function (id, x, y, width, height) {
+    Shape.call(this, id, x, y);
+    this.width  = width;
+    this.height = height;
+};
+Rectangle.prototype = Object.create(Shape.prototype);
+Rectangle.prototype.constructor = Rectangle;
+var Circle = function (id, x, y, radius) {
+    Shape.call(this, id, x, y);
+    this.radius = radius;
+};
+Circle.prototype = Object.create(Shape.prototype);
+Circle.prototype.constructor = Circle;
+```
+
+#### 3.表达式的类继承
+- 通过扩展表达式来生成函数对象，从而支持mixin风格的继承。 [注意：当然，泛型聚合函数通常由像这样的库提供]
+
+ ```
+var aggregation = (baseClass, ...mixins) => {
+    let base = class _Combined extends baseClass {
+        constructor (...args) {
+            super(...args)
+            mixins.forEach((mixin) => {
+                mixin.prototype.initializer.call(this)
+            })
+        }
+    }
+    let copyProps = (target, source) => {
+        Object.getOwnPropertyNames(source)
+            .concat(Object.getOwnPropertySymbols(source))
+            .forEach((prop) => {
+            if (prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/))
+                return
+            Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop))
+        })
+    }
+    mixins.forEach((mixin) => {
+        copyProps(base.prototype, mixin.prototype)
+        copyProps(base, mixin)
+    })
+    return base
+}
+class Colored {
+    initializer ()     { this._color = "white" }
+    get color ()       { return this._color }
+    set color (v)      { this._color = v }
+}
+class ZCoord {
+    initializer ()     { this._z = 0 }
+    get z ()           { return this._z }
+    set z (v)          { this._z = v }
+}
+class Shape {
+    constructor (x, y) { this._x = x; this._y = y }
+    get x ()           { return this._x }
+    set x (v)          { this._x = v }
+    get y ()           { return this._y }
+    set y (v)          { this._y = v }
+}
+class Rectangle extends aggregation(Shape, Colored, ZCoord) {}
+var rect = new Rectangle(7, 42)
+rect.z     = 1000
+rect.color = "red"
+console.log(rect.x, rect.y, rect.z, rect.color)
+```
+```
+var aggregation = function (baseClass, mixins) {
+    var base = function () {
+        baseClass.apply(this, arguments);
+        mixins.forEach(function (mixin) {
+            mixin.prototype.initializer.call(this);
+        }.bind(this));
+    };
+    base.prototype = Object.create(baseClass.prototype);
+    base.prototype.constructor = base;
+    var copyProps = function (target, source) {
+        Object.getOwnPropertyNames(source).forEach(function (prop) {
+            if (prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/))
+                return
+            Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop))
+        })
+    }
+    mixins.forEach(function (mixin) {
+        copyProps(base.prototype, mixin.prototype);
+        copyProps(base, mixin);
+    });
+    return base;
+};
+var Colored = function () {};
+Colored.prototype = {
+    initializer: function ()  { this._color = "white"; },
+    getColor:    function ()  { return this._color; },
+    setColor:    function (v) { this._color = v; }
+};
+var ZCoord = function () {};
+ZCoord.prototype = {
+    initializer: function ()  { this._z = 0; },
+    getZ:        function ()  { return this._z; },
+    setZ:        function (v) { this._z = v; }
+};
+var Shape = function (x, y) {
+    this._x = x; this._y = y;
+};
+Shape.prototype = {
+    getX: function ()  { return this._x; },
+    setX: function (v) { this._x = v; },
+    getY: function ()  { return this._y; },
+    setY: function (v) { this._y = v; }
+}
+var _Combined = aggregation(Shape, [ Colored, ZCoord ]);
+var Rectangle = function (x, y) {
+    _Combined.call(this, x, y);
+};
+Rectangle.prototype = Object.create(_Combined.prototype);
+Rectangle.prototype.constructor = Rectangle;
+var rect = new Rectangle(7, 42);
+rect.setZ(1000);
+rect.setColor("red");
+console.log(rect.getX(), rect.getY(), rect.getZ(), rect.getColor());
+```
+
+#### 4.基类访问
+- 直观地访问基类的构造函数和方法。
+
+ ```
+class Shape {
+    …
+    toString () {
+        return `Shape(${this.id})`
+    }
+}
+class Rectangle extends Shape {
+    constructor (id, x, y, width, height) {
+        super(id, x, y)
+        …
+    }
+    toString () {
+        return "Rectangle > " + super.toString()
+    }
+}
+class Circle extends Shape {
+    constructor (id, x, y, radius) {
+        super(id, x, y)
+        …
+    }
+    toString () {
+        return "Circle > " + super.toString()
+    }
+}
+```
+```
+var Shape = function (id, x, y) {
+    …
+};
+Shape.prototype.toString = function (x, y) {
+    return "Shape(" + this.id + ")"
+};
+var Rectangle = function (id, x, y, width, height) {
+    Shape.call(this, id, x, y);
+    …
+};
+Rectangle.prototype.toString = function () {
+    return "Rectangle > " + Shape.prototype.toString.call(this);
+};
+var Circle = function (id, x, y, radius) {
+    Shape.call(this, id, x, y);
+    …
+};
+Circle.prototype.toString = function () {
+    return "Circle > " + Shape.prototype.toString.call(this);
+};
+```
+
+#### 5.静态成员
+- 简单支持静态类成员。
+
+ ```
+class Rectangle extends Shape {
+    …
+    static defaultRectangle () {
+        return new Rectangle("default", 0, 0, 100, 100)
+    }
+}
+class Circle extends Shape {
+    …
+    static defaultCircle () {
+        return new Circle("default", 0, 0, 100)
+    }
+}
+var defRectangle = Rectangle.defaultRectangle()
+var defCircle    = Circle.defaultCircle()
+```
+```
+var Rectangle = function (id, x, y, width, height) {
+    …
+};
+Rectangle.defaultRectangle = function () {
+    return new Rectangle("default", 0, 0, 100, 100);
+};
+var Circle = function (id, x, y, width, height) {
+    …
+};
+Circle.defaultCircle = function () {
+    return new Circle("default", 0, 0, 100);
+};
+var defRectangle = Rectangle.defaultRectangle();
+var defCircle    = Circle.defaultCircle();
+```
+
+#### 6.getter / setter
+- Getter / Setter也直接在类中（而不仅仅是在对象初始化器中，因为从ECMAScript 5.1开始是可能的）。
+
+ ```
+class Rectangle {
+    constructor (width, height) {
+        this._width  = width
+        this._height = height
+    }
+    set width  (width)  { this._width = width               }
+    get width  ()       { return this._width                }
+    set height (height) { this._height = height             }
+    get height ()       { return this._height               }
+    get area   ()       { return this._width * this._height }
+}
+var r = new Rectangle(50, 20)
+r.area === 1000
+```
+```
+var Rectangle = function (width, height) {
+    this._width  = width;
+    this._height = height;
+};
+Rectangle.prototype = {
+    set width  (width)  { this._width = width;               },
+    get width  ()       { return this._width;                },
+    set height (height) { this._height = height;             },
+    get height ()       { return this._height;               },
+    get area   ()       { return this._width * this._height; }
+};
+var r = new Rectangle(50, 20);
+r.area === 1000;
+```
+
+
+
