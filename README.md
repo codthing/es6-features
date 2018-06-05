@@ -41,9 +41,11 @@ Object.defineProperty(typeof global === "object" ? global : window, "PI", {
 PI > 3.0;
 ```
 
+
 ### 二. 作用域
 ###### scoping
-##### 1.块范围变量
+
+#### 1.块范围变量
 - 块范围的变量（和常量）没有提升。
 
 	```
@@ -84,7 +86,7 @@ callbacks[1]() === 2;
 callbacks[2]() === 4;
 ```
 
-##### 2.块范围功能
+#### 2.块范围功能
 - 块范围的函数定义。
 
 	```
@@ -111,8 +113,10 @@ callbacks[2]() === 4;
 })();
 ```
 
+
 ### 三. 箭头函数
 ##### arrow-functions
+
 #### 1.表达式
 - 更具表达性的闭包语法。
 
@@ -171,8 +175,10 @@ this.nums.forEach(function (v) {
 }.bind(this));
 ```
 
+
 ### 四. 扩展参数处理
 ##### extended-parameter-handling
+
 #### 1.默认参数值
 - 简单直观的函数参数默认值。
 
@@ -235,9 +241,11 @@ var str = "foo";
 var chars = str.split(""); // [ "f", "o", "o" ]
 ```
 
+
 ### 五. 模板文字
 ##### template-literals
-##### 1.字符串插值
+
+#### 1.字符串插值
 - 单行和多行字符串的直观表达式插值。（注意：不要混淆，Template Literals最初在ECMAScript 6语言规范的草稿中被命名为“Template Strings”）
 
 	```
@@ -284,8 +292,10 @@ String.raw `foo\n${ 42 }bar` === "foo\\n42bar"
 //  在ES5中没有任何等价物
 ```
 
+
 ### 六. 扩展文字
 ##### extended-literals
+
 #### 1.二进制和八进制文字
 - 直接支持安全的二进制和八进制文字。
 
@@ -319,8 +329,10 @@ for (let codepoint of "𠮷") console.log(codepoint)
 //  no equivalent in ES5
 ```
 
+
 ### 七. 增强的正则表达式
 ##### enhanced-regular-expression
+
 #### 正则表达式粘滞匹配
 - 保持匹配位置在匹配之间保持粘性，这种方式支持对任意长输入字符串进行高效解析，即使使用任意数量的不同正则表达式。
 
@@ -371,8 +383,10 @@ parser("Foo 1 Bar 7 Baz 42", [
 ]);
 ```
 
+
 ### 八. 增强的对象属性
 ##### enhanced-object-properties
+
 #### 1.属性速记
 - 通用对象属性定义惯用语法的长度较短。
 
@@ -429,8 +443,10 @@ obj = {
 };
 ```
 
+
 ### 九. 解构赋值
 ##### destructuring-assignment
+
 #### 1.数组匹配
 - 在分配过程中直观且灵活地将阵列解构成单个变量。
 
