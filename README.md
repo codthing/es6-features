@@ -14,7 +14,7 @@
 1. 类 [classes](#classes)
 1. 符号类型 [symbol-type](#symbol-type)
 1. 迭代器 [iterators](#iterators)
-1. Generators [generators](#generators)
+1. 生成器 [generators](#generators)
 1. Map / Set ＆ WeakMap / WeakSet [map-set-weak-map-weak-set](#map-set-weak-map-weak-set)
 1. 键入数组 [typed-arrays](#typed-arrays)
 1. 新的内置方法 [new-built-in-methods](#new-built-in-methods)
@@ -915,4 +915,706 @@ r.area === 1000;
 ```
 
 
+### 十二. 符号类型
+###### symbol-type
 
+#### 1.符号类型
+- 唯一且不可变的数据类型将用作对象属性的标识符。符号可以有可选的描述，但仅用于调试目的。
+
+ ```
+Symbol("foo") !== Symbol("foo")
+const foo = Symbol()
+const bar = Symbol()
+typeof foo === "symbol"
+typeof bar === "symbol"
+let obj = {}
+obj[foo] = "foo"
+obj[bar] = "bar"
+JSON.stringify(obj) // {}
+Object.keys(obj) // []
+Object.getOwnPropertyNames(obj) // []
+Object.getOwnPropertySymbols(obj) // [ foo, bar ]
+```
+```
+// 在ES5中没有等价物
+```
+
+#### 2.全局符号
+- 全局符号，通过唯一键索引。
+
+ ```
+Symbol.for("app.foo") === Symbol.for("app.foo")
+const foo = Symbol.for("app.foo")
+const bar = Symbol.for("app.bar")
+Symbol.keyFor(foo) === "app.foo"
+Symbol.keyFor(bar) === "app.bar"
+typeof foo === "symbol"
+typeof bar === "symbol"
+let obj = {}
+obj[foo] = "foo"
+obj[bar] = "bar"
+JSON.stringify(obj) // {}
+Object.keys(obj) // []
+Object.getOwnPropertyNames(obj) // []
+Object.getOwnPropertySymbols(obj) // [ foo, bar ]
+```
+```
+// 在ES5中没有等价物
+```
+
+
+### 十三. 迭代器
+###### iterators
+#### 迭代器和For-Of运算符
+- 支持“迭代”协议，允许对象定制其迭代行为。 此外，支持“迭代器”协议来产生序列值（有限或无限）。 最后，为运算符提供一个方便的方法来遍历一个可迭代对象的所有值。
+```
+let fibonacci = {
+    [Symbol.iterator]() {
+        let pre = 0, cur = 1
+        return {
+           next () {
+               [ pre, cur ] = [ cur, pre + cur ]
+               return { done: false, value: cur }
+           }
+        }
+    }
+}
+for (let n of fibonacci) {
+    if (n > 1000)
+        break
+    console.log(n)
+}
+```
+```
+var fibonacci = {
+    next: (function () {
+        var pre = 0, cur = 1;
+        return function () {
+            tmp = pre;
+            pre = cur;
+            cur += tmp;
+            return cur;
+        };
+    })()};
+var n;
+for (;;) {
+    n = fibonacci.next();
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+```
+
+
+### 十四. 生成器
+###### generators
+
+#### 1.生成器函数，迭代器协议
+- 支持生成器，这是一个包含生成器函数的迭代器的特例，可以暂停和恢复控制流，以生成序列值（有限或无限）。
+```
+let fibonacci = {
+    *[Symbol.iterator]() {
+        let pre = 0, cur = 1
+        for (;;) {
+            [ pre, cur ] = [ cur, pre + cur ]
+            yield cur
+        }
+    }
+}
+for (let n of fibonacci) {
+    if (n > 1000)
+        break
+    console.log(n)
+}
+```
+```
+var fibonacci = {
+    next: (function () {
+        var pre = 0, cur = 1;
+        return function () {
+            tmp = pre;
+            pre = cur;
+            cur += tmp;
+            return cur;
+        };
+    })()
+};
+var n;
+for (;;) {
+    n = fibonacci.next();
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+```
+
+#### 2.生成器函数，直接使用
+- 支持生成器函数，这是函数的一个特殊变体，可以暂停和恢复控制流，以生成序列值（有限或无限）。
+```
+function* range (start, end, step) {
+    while (start < end) {
+        yield start
+        start += step
+    }
+}
+for (let i of range(0, 10, 2)) {
+    console.log(i) // 0, 2, 4, 6, 8
+}
+```
+```
+function range (start, end, step) {
+    var list = [];
+    while (start < end) {
+        list.push(start);
+        start += step;
+    }
+    return list;
+}
+var r = range(0, 10, 2);
+for (var i = 0; i < r.length; i++) {
+    console.log(r[i]); // 0, 2, 4, 6, 8
+}
+```
+
+#### 3.生成器匹配
+- 支持生成器函数，即可以暂停和恢复控制流的函数，以生成和传播值序列（有限或无限）。
+```
+let fibonacci = function* (numbers) {
+    let pre = 0, cur = 1
+    while (numbers-- > 0) {
+        [ pre, cur ] = [ cur, pre + cur ]
+        yield cur
+    }
+}
+for (let n of fibonacci(1000))
+    console.log(n)
+let numbers = [ ...fibonacci(1000) ]
+let [ n1, n2, n3, ...others ] = fibonacci(1000)
+```
+```
+//  在ES5中没有等价物
+```
+
+#### 4.生成器控制流程
+- 支持生成器，这是迭代器的一个特例，它可以暂停和恢复控制流，以支持与“Promises”（见下文）结合的“协同例程”风格的异步编程。 [注意：通用异步函数通常由可重用的库提供，并在此给出以便更好地理解。 在实践中看到co或Bluebird的协同程序。]
+```
+//  通用异步控制流驱动程序
+function async (proc, ...params) {
+    let iterator = proc(...params)
+    return new Promise((resolve, reject) => {
+        let loop = (value) => {
+            let result
+            try {
+                result = iterator.next(value)
+            }
+            catch (err) {
+                reject(err)
+            }
+            if (result.done)
+                resolve(result.value)
+            else if (   typeof result.value      === "object"
+                     && typeof result.value.then === "function")
+                result.value.then((value) => {
+                    loop(value)
+                }, (err) => {
+                    reject(err)
+                })
+            else
+                loop(result.value)
+        }
+        loop()
+    })
+}
+//  特定于应用程序的异步构建器
+function makeAsync (text, after) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(text), after)
+    })
+}
+//  应用程序特定的异步过程
+async(function* (greeting) {
+    let foo = yield makeAsync("foo", 300)
+    let bar = yield makeAsync("bar", 200)
+    let baz = yield makeAsync("baz", 100)
+    return `${greeting} ${foo} ${bar} ${baz}`
+}, "Hello").then((msg) => {
+    console.log("RESULT:", msg) // "Hello foo bar baz"
+})
+```
+```
+// 在ES5中没有等价物
+```
+
+
+#### 5.生成器方法
+- 基于生成器函数，支持生成器方法，即类和对象中的方法。
+```
+class Clz {
+    * bar () {
+        …
+    }
+}
+let Obj = {
+    * foo () {
+        …
+    }
+}
+```
+```
+// 在ES5中没有等价物
+```
+
+
+### 十五. Map/Set & WeakMap/WeakSet
+###### map-set-weak-map-weak-set
+
+#### 1.设置数据结构
+- 基于集合的常用算法的更清晰的数据结构。
+```
+let s = new Set()
+s.add("hello").add("goodbye").add("hello")
+s.size === 2
+s.has("hello") === true
+for (let key of s.values()) // 插入指令
+    console.log(key)
+```
+```
+var s = {};
+s["hello"] = true; s["goodbye"] = true; s["hello"] = true;
+Object.keys(s).length === 2;
+s["hello"] === true;
+for (var key in s) // 任意的顺序
+    if (s.hasOwnProperty(key))
+        console.log(s[key]);
+```
+
+#### 2.map 数据结构
+- 基于 map 的常用算法的更清晰的数据结构。
+```
+let m = new Map()
+let s = Symbol()
+m.set("hello", 42)
+m.set(s, 34)
+m.get(s) === 34
+m.size === 2
+for (let [ key, val ] of m.entries())
+    console.log(key + " = " + val)
+```
+```
+var m = {};
+// 在ES5中没有任何等价物
+m["hello"] = 42;
+// 在ES5中没有任何等价物
+// 在ES5中没有任何等价物
+Object.keys(m).length === 2;
+for (key in m) {
+    if (m.hasOwnProperty(key)) {
+        var val = m[key];
+        console.log(key + " = " + val);
+    }
+}
+```
+
+#### 3. 弱链数据结构
+- 无内存泄漏的Object-key'd并排数据结构。
+```
+let isMarked = new WeakSet()
+let attachedData = new WeakMap()
+export class Node {
+    constructor (id){ this.id = id }
+    mark (){ isMarked.add(this) }
+    unmark (){ isMarked.delete(this) }
+    marked (){ return isMarked.has(this) }
+    set data (data){ attachedData.set(this, data)}
+    get data (){ return attachedData.get(this) }
+}
+let foo = new Node("foo")
+JSON.stringify(foo) === '{"id":"foo"}'
+foo.mark()
+foo.data = "bar"
+foo.data === "bar"
+JSON.stringify(foo) === '{"id":"foo"}'
+isMarked.has(foo) === true
+attachedData.has(foo) === true
+foo = null  /* remove only reference to foo */
+attachedData.has(foo) === false
+isMarked.has(foo) === false
+```
+```
+// 在ES5中没有等价物
+```
+
+
+
+### 十六. 键入数组
+###### typed-arrays
+- 支持任意字节数据结构来实现网络协议，密码算法，文件格式操作等。
+```
+//  相当于以下C结构的ES6类：
+//  struct Example { unsigned long id; char username[16]; float amountDue }
+class Example {
+    constructor (buffer = new ArrayBuffer(24)) {
+        this.buffer = buffer
+    }
+    set buffer (buffer) {
+        this._buffer    = buffer
+        this._id        = new Uint32Array (this._buffer,  0,  1)
+        this._username  = new Uint8Array  (this._buffer,  4, 16)
+        this._amountDue = new Float32Array(this._buffer, 20,  1)
+    }
+    get buffer ()     { return this._buffer       }
+    set id (v)        { this._id[0] = v           }
+    get id ()         { return this._id[0]        }
+    set username (v)  { this._username[0] = v     }
+    get username ()   { return this._username[0]  }
+    set amountDue (v) { this._amountDue[0] = v    }
+    get amountDue ()  { return this._amountDue[0] }
+}
+let example = new Example()
+example.id = 7
+example.username = "John Doe"
+example.amountDue = 42.0
+```
+```
+// 在ES5中没有等价物
+// （只有HTML5中的一个等效项）
+```
+
+
+### 十七. 新的内置方法
+###### new-built-in-methods
+
+#### 1.对象属性分配
+- 将一个或多个源对象的枚举属性分配到目标对象的新函数。
+```
+var dest = { quux: 0 }
+var src1 = { foo: 1, bar: 2 }
+var src2 = { foo: 3, baz: 4 }
+Object.assign(dest, src1, src2)
+dest.quux === 0
+dest.foo  === 3
+dest.bar  === 2
+dest.baz  === 4
+```
+```
+var dest = { quux: 0 };
+var src1 = { foo: 1, bar: 2 };
+var src2 = { foo: 3, baz: 4 };
+Object.keys(src1).forEach(function(k) {
+    dest[k] = src1[k];
+});
+Object.keys(src2).forEach(function(k) {
+    dest[k] = src2[k];
+});
+dest.quux === 0;
+dest.foo  === 3;
+dest.bar  === 2;
+dest.baz  === 4;
+```
+
+#### 2.数组元素查找
+- 在数组中查找元素的新功能。
+```
+[ 1, 3, 4, 2 ].find(x => x > 3) // 4
+[ 1, 3, 4, 2 ].findIndex(x => x > 3) // 2
+```
+```
+[ 1, 3, 4, 2 ].filter(function (x) { return x > 3; })[0]; // 4
+// 在ES5中没有任何等价物
+```
+
+#### 3.字符串重复
+- 新的字符串重复功能。
+```
+" ".repeat(4 * depth)
+"foo".repeat(3)
+```
+```
+Array((4 * depth) + 1).join(" ");
+Array(3 + 1).join("foo");
+```
+
+### 4.字符串搜索
+- 新的特定字符串函数来搜索子字符串。
+```
+"hello".startsWith("ello", 1) // true
+"hello".endsWith("hell", 4)   // true
+"hello".includes("ell")       // true
+"hello".includes("ell", 1)    // true
+"hello".includes("ell", 2)    // false
+```
+```
+"hello".indexOf("ello") === 1;    // true
+"hello".indexOf("hell") === (4 - "hell".length); // true
+"hello".indexOf("ell") !== -1;    // true
+"hello".indexOf("ell", 1) !== -1; // true
+"hello".indexOf("ell", 2) !== -1; // false
+```
+
+### 5.数字类型检查
+- 用于检查非数字和有限数字的新函数。
+```
+Number.isNaN(42) === false
+Number.isNaN(NaN) === true
+Number.isFinite(Infinity) === false
+Number.isFinite(-Infinity) === false
+Number.isFinite(NaN) === false
+Number.isFinite(123) === true
+```
+```
+var isNaN = function (n) {
+    return n !== n;
+};
+var isFinite = function (v) {
+    return (typeof v === "number" && !isNaN(v) && v !== Infinity && v !== -Infinity);
+};
+isNaN(42) === false;
+isNaN(NaN) === true;
+isFinite(Infinity) === false;
+isFinite(-Infinity) === false;
+isFinite(NaN) === false;
+isFinite(123) === true;
+```
+
+### 6.数字安全检查
+- 检查整数是否在安全范围内，即它是否由JavaScript正确表示（其中所有数字（包括整数）在技术上都是浮点数）。
+```
+Number.isSafeInteger(42) === true
+Number.isSafeInteger(9007199254740992) === false
+```
+```
+function isSafeInteger (n) {
+    return (
+           typeof n === 'number'
+        && Math.round(n) === n
+        && -(Math.pow(2, 53) - 1) <= n
+        && n <= (Math.pow(2, 53) - 1)
+    );
+}
+isSafeInteger(42) === true;
+isSafeInteger(9007199254740992) === false;
+```
+
+### 7.数量比较
+- 标准 Epsilon 值的可用性，用于更精确地比较浮点数。
+```
+console.log(0.1 + 0.2 === 0.3) // false
+console.log(Math.abs((0.1 + 0.2) - 0.3) < Number.EPSILON) // true
+```
+```
+console.log(0.1 + 0.2 === 0.3); // false
+console.log(Math.abs((0.1 + 0.2) - 0.3) < 2.220446049250313e-16); // true
+```
+
+### 8.数字截断
+- 将浮点数截断为其整数部分，完全删除小数部分。
+```
+console.log(Math.trunc(42.7)) // 42
+console.log(Math.trunc( 0.1)) // 0
+console.log(Math.trunc(-0.1)) // -0
+```
+```
+function mathTrunc (x) {
+    return (x < 0 ? Math.ceil(x) : Math.floor(x));
+}
+console.log(mathTrunc(42.7)) // 42
+console.log(mathTrunc( 0.1)) // 0
+console.log(mathTrunc(-0.1)) // -0
+```
+
+### 9.数字符号确定
+- 确定一个数字的符号，包括有符号零和非数字的特殊情况。
+```
+console.log(Math.sign(7))   // 1
+console.log(Math.sign(0))   // 0
+console.log(Math.sign(-0))  // -0
+console.log(Math.sign(-7))  // -1
+console.log(Math.sign(NaN)) // NaN
+```
+```
+function mathSign (x) {
+    return ((x === 0 || isNaN(x)) ? x : (x > 0 ? 1 : -1));
+}
+console.log(mathSign(7))   // 1
+console.log(mathSign(0))   // 0
+console.log(mathSign(-0))  // -0
+console.log(mathSign(-7))  // -1
+console.log(mathSign(NaN)) // NaN
+```
+
+
+### 十八. Promises
+###### promises
+
+#### 1.Promise 用法
+- 可以异步生成并在将来可用的值的第一类表示。
+```
+function msgAfterTimeout (msg, who, timeout) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(`${msg} Hello ${who}!`), timeout)
+    })
+}
+msgAfterTimeout("", "Foo", 100).then((msg) =>
+    msgAfterTimeout(msg, "Bar", 200)
+).then((msg) => {
+    console.log(`done after 300ms:${msg}`)
+})
+```
+```
+function msgAfterTimeout (msg, who, timeout, onDone) {
+    setTimeout(function () {
+        onDone(msg + " Hello " + who + "!");
+    }, timeout);
+}
+msgAfterTimeout("", "Foo", 100, function (msg) {
+    msgAfterTimeout(msg, "Bar", 200, function (msg) {
+        console.log("done after 300ms:" + msg);
+    });
+});
+```
+
+#### 2.Promise 组合
+- 将一个或多个 Promise 组合成新的 Promise，而无需亲自处理底层异步操作的指令。
+```
+function fetchAsync (url, timeout, onData, onError) {
+    …
+}
+let fetchPromised = (url, timeout) => {
+    return new Promise((resolve, reject) => {
+        fetchAsync(url, timeout, resolve, reject)
+    })
+}
+Promise.all([
+    fetchPromised("http://backend/foo.txt", 500),
+    fetchPromised("http://backend/bar.txt", 500),
+    fetchPromised("http://backend/baz.txt", 500)
+]).then((data) => {
+    let [ foo, bar, baz ] = data
+    console.log(`success: foo=${foo} bar=${bar} baz=${baz}`)
+}, (err) => {
+    console.log(`error: ${err}`)
+})
+```
+```
+function fetchAsync (url, timeout, onData, onError) {
+    …
+}
+function fetchAll (request, onData, onError) {
+    var result = [], results = 0;
+    for (var i = 0; i < request.length; i++) {
+        result[i] = null;
+        (function (i) {
+            fetchAsync(request[i].url, request[i].timeout, function (data) {
+                result[i] = data;
+                if (++results === request.length)
+                    onData(result);
+            }, onError);
+        })(i);
+    }
+}
+fetchAll([
+    { url: "http://backend/foo.txt", timeout: 500 },
+    { url: "http://backend/bar.txt", timeout: 500 },
+    { url: "http://backend/baz.txt", timeout: 500 }
+], function (data) {
+    var foo = data[0], bar = data[1], baz = data[2];
+    console.log("success: foo=" + foo + " bar=" + bar + " baz=" + baz);
+}, function (err) {
+    console.log("error: " + err);
+});
+```
+
+
+### 十九. 元编程
+###### meta-programming
+
+#### 1.代理
+- 挂钩到运行时级别的对象元操作。
+```
+let target = {
+    foo: "Welcome, foo"
+}
+let proxy = new Proxy(target, {
+    get (receiver, name) {
+        return name in receiver ? receiver[name] : `Hello, ${name}`
+    }
+})
+proxy.foo   === "Welcome, foo"
+proxy.world === "Hello, world"
+```
+```
+// 在ES5中没有等价物
+```
+
+#### 2.反射
+- 进行对应于对象元操作的调用。
+```
+let obj = { a: 1 }
+Object.defineProperty(obj, "b", { value: 2 })
+obj[Symbol("c")] = 3
+Reflect.ownKeys(obj) // [ "a", "b", Symbol(c) ]
+```
+```
+var obj = { a: 1 };
+Object.defineProperty(obj, "b", { value: 2 });
+// 在ES5中没有等价物
+Object.getOwnPropertyNames(obj); // [ "a", "b" ]
+```
+
+### 二十. 国际化与本土化
+###### internationalization-localization
+
+#### 1.整理
+- 排序一组字符串并在一组字符串中搜索。 整理由区域设置参数化并且了解Unicode。
+```
+// 在德语中，“ä”与“a”
+// 在瑞典语中，“ä”在“z”之后排序
+var list = [ "ä", "a", "z" ]
+var l10nDE = new Intl.Collator("de")
+var l10nSV = new Intl.Collator("sv")
+l10nDE.compare("ä", "z") === -1
+l10nSV.compare("ä", "z") === +1
+console.log(list.sort(l10nDE.compare)) // [ "a", "ä", "z" ]
+console.log(list.sort(l10nSV.compare)) // [ "a", "z", "ä" ]
+```
+```
+// 在ES5中没有等价物
+```
+
+#### 2.数字格式
+- 使用数字分组和本地化分隔符格式化数字。
+```
+var l10nEN = new Intl.NumberFormat("en-US")
+var l10nDE = new Intl.NumberFormat("de-DE")
+l10nEN.format(1234567.89) === "1,234,567.89"
+l10nDE.format(1234567.89) === "1.234.567,89"
+```
+```
+// 在ES5中没有等价物
+```
+
+#### 3.货币格式
+- 使用数字分组格式化数字，本地化分隔符和附加的货币符号。
+```
+var l10nUSD = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" })
+var l10nGBP = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" })
+var l10nEUR = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" })
+l10nUSD.format(100200300.40) === "$100,200,300.40"
+l10nGBP.format(100200300.40) === "£100,200,300.40"
+l10nEUR.format(100200300.40) === "100.200.300,40 €"
+```
+```
+// 在ES5中没有等价物
+```
+
+#### 4.日期/时间格式
+- 使用本地化排序和分隔符格式化日期/时间。
+```
+var l10nEN = new Intl.DateTimeFormat("en-US")
+var l10nDE = new Intl.DateTimeFormat("de-DE")
+l10nEN.format(new Date("2015-01-02")) === "1/2/2015"
+l10nDE.format(new Date("2015-01-02")) === "2.1.2015"
+```
+```
+// 在ES5中没有等价物
+```
