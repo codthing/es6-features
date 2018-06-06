@@ -1,6 +1,6 @@
 # ECMAScript 6 - 新功能：概述和比较
 
-### 索引
+## 索引
 1. 常量 [constants](#constants)
 1. 作用域 [scoping](#scoping)
 1. 箭头函数 [arrow-functions](#arrow-functions)
@@ -22,7 +22,7 @@
 1. 元编程 [meta-programming](#meta-programming)
 1. 国际化与本土化 [internationalization-localization](#internationalization-localization)
 
-### 一. 常量
+## 一. 常量
 ###### constants
 - 常量（也称为“不可变变量”），即不能重新分配新内容的变量。注意：这只会使变量本身不可变，而不是它赋值的内容（例如，如果内容是一个对象，这意味着对象本身仍然可以被改变）。
 
@@ -42,10 +42,10 @@ PI > 3.0;
 ```
 
 
-### 二. 作用域
+## 二. 作用域
 ###### scoping
 
-#### 1.块范围变量
+### 1.块范围变量
 - 块范围的变量（和常量）没有提升。
 
  ```
@@ -86,7 +86,7 @@ callbacks[1]() === 2;
 callbacks[2]() === 4;
 ```
 
-#### 2.块范围功能
+### 2.块范围功能
 - 块范围的函数定义。
 
  ```
@@ -114,10 +114,10 @@ callbacks[2]() === 4;
 ```
 
 
-### 三. 箭头函数
+## 三. 箭头函数
 ###### arrow-functions
 
-#### 1.表达式
+### 1.表达式
 - 更具表达性的闭包语法。
 
  ```
@@ -131,7 +131,7 @@ pairs = evens.map(function (v) { return { even: v, odd: v + 1 }; });
 nums  = evens.map(function (v, i) { return v + i; });
 ```
 
-#### 2.声明主体
+### 2.声明主体
 - 更具表达性的闭包语法。
 
  ```
@@ -147,7 +147,7 @@ nums.forEach(function (v) {
 });
 ```
 
-#### 3.词汇 this
+### 3.词汇 this
 - 更直观地处理当前的对象上下文。
 
  ```
@@ -176,10 +176,10 @@ this.nums.forEach(function (v) {
 ```
 
 
-### 四. 扩展参数处理
+## 四. 扩展参数处理
 ###### extended-parameter-handling
 
-#### 1.默认参数值
+### 1.默认参数值
 - 简单直观的函数参数默认值。
 
  ```
@@ -199,7 +199,7 @@ function f (x, y, z) {
 f(1) === 50;
 ```
 
-#### 2.剩余参数
+### 2.剩余参数
 - 将剩余参数聚合为可变参数函数的单个参数。
 
  ```
@@ -216,7 +216,7 @@ function f (x, y) {
 f(1, 2, "hello", true, 7) === 9;
 ```
 
-#### 3.传播运营商
+### 3.传播运营商
 - 将可迭代集合（如数组或字符串）的元素扩展到文字元素和单个函数参数中。
 
  ```
@@ -242,10 +242,10 @@ var chars = str.split(""); // [ "f", "o", "o" ]
 ```
 
 
-### 五. 模板文字
+## 五. 模板文字
 ###### template-literals
 
-#### 1.字符串插值
+### 1.字符串插值
 - 单行和多行字符串的直观表达式插值。（注意：不要混淆，Template Literals最初在ECMAScript 6语言规范的草稿中被命名为“Template Strings”）
 
  ```
@@ -263,7 +263,7 @@ var message = "Hello " + customer.name + ",\n" +
 "a total of " + (card.amount * card.unitprice) + " bucks?";
 ```
 
-#### 2.自定义插值
+### 2.自定义插值
 - 任意方法的灵活表达式插值。
 
  ```
@@ -273,7 +273,7 @@ get`http://example.com/foo?bar=${bar + baz}&quux=${quux}`
 get([ "http://example.com/foo?bar=", "&quux=", "" ],bar + baz, quux);
 ```
 
-#### 3.原始字符串访问
+### 3.原始字符串访问
 - 访问原始模板字符串内容（反斜杠不解释）。
 
  ```
@@ -292,10 +292,10 @@ String.raw `foo\n${ 42 }bar` === "foo\\n42bar"
 ```
 
 
-### 六. 扩展文字
+## 六. 扩展文字
 ###### extended-literals
 
-#### 1.二进制和八进制文字
+### 1.二进制和八进制文字
 - 直接支持安全的二进制和八进制文字。
 
  ```
@@ -308,7 +308,7 @@ parseInt("767", 8) === 503;
 0767 === 503; // 只有在非严格的向后兼容模式下
 ```
 
-#### 2.Unicode字符串和RegExp Literal
+### 2.Unicode字符串和RegExp Literal
 - 在字符串和正则表达式中使用Unicode的扩展支持。
 
  ```
@@ -329,10 +329,10 @@ for (let codepoint of "𠮷") console.log(codepoint)
 ```
 
 
-### 七. 增强的正则表达式
+## 七. 增强的正则表达式
 ###### enhanced-regular-expression
 
-#### 正则表达式粘滞匹配
+### 正则表达式粘滞匹配
 - 保持匹配位置在匹配之间保持粘性，这种方式支持对任意长输入字符串进行高效解析，即使使用任意数量的不同正则表达式。
 
  ```
@@ -383,10 +383,10 @@ parser("Foo 1 Bar 7 Baz 42", [
 ```
 
 
-### 八. 增强的对象属性
+## 八. 增强的对象属性
 ###### enhanced-object-properties
 
-#### 1.属性速记
+### 1.属性速记
 - 通用对象属性定义惯用语法的长度较短。
 
  ```
@@ -398,7 +398,7 @@ var x = 0, y = 0;
 obj = { x: x, y: y };
 ```
 
-#### 2.计算属性名称
+### 2.计算属性名称
 - 支持对象属性定义中的计算名称。
 
  ```
@@ -413,7 +413,7 @@ var obj = {
 obj[ "baz" + quux() ] = 42;
 ```
 
-#### 3.方法属性
+### 3.方法属性
 - 对于常规函数和生成器函数，支持对象属性定义中的方法符号。
 
  ```
@@ -446,7 +446,7 @@ obj = {
 ### 九. 解构赋值
 ###### destructuring-assignment
 
-#### 1.数组匹配
+### 1.数组匹配
 - 在分配过程中直观且灵活地将阵列解构成单个变量。
 
  ```
@@ -460,7 +460,7 @@ var a = list[0], b = list[2];
 var tmp = a; a = b; b = tmp;
 ```
 
-#### 2.对象匹配，速记符号
+### 2.对象匹配，速记符号
 - 在分配过程中直观且灵活地将对象解构成单个变量。
 
  ```
@@ -473,7 +473,7 @@ var lhs = tmp.lhs;
 var rhs = tmp.rhs;
 ```
 
-#### 3.对象匹配，深度匹配
+### 3.对象匹配，深度匹配
 - 在分配过程中直观且灵活地将对象解构成单个变量。
 
  ```
@@ -486,7 +486,7 @@ var b = tmp.lhs.op;
 var c = tmp.rhs;
 ```
 
-#### 4.对象和数组匹配，默认值
+### 4.对象和数组匹配，默认值
 - 简单直观的默认值，用于解构对象和数组。
 
  ```
@@ -504,7 +504,7 @@ var x = list[0];
 var y = list[1] === undefined ? 2 : list[1];
 ```
 
-#### 5.参数上下文匹配
+### 5.参数上下文匹配
 - 在函数调用期间，将数组和对象直观且灵活地解构成单个参数。
 
  ```
@@ -542,7 +542,7 @@ g({ name: "foo", val:  7 });
 h({ name: "bar", val: 42 });
 ```
 
-#### 6.失败软解构
+### 6.失败软解构
 - 失效软解构，可选择默认值。
 
  ```
@@ -566,10 +566,10 @@ d === undefined;
 ```
 
 
-### 十. 模块
+## 十. 模块
 ###### modules
 
-#### 1.值导出/导入
+### 1.值导出/导入
 - 支持从/向模块输出/输入值，而不会造成全局命名空间污染。
 
  ```
@@ -596,7 +596,7 @@ var sum = LibMath.sum, pi = LibMath.pi;
 console.log("2π = " + sum(pi, pi));
 ```
 
-#### 2.默认和通配符
+### 2.默认和通配符
 - 将值标记为默认导出值和值的质量混合。
 
  ```
@@ -622,10 +622,10 @@ console.log("e^{π} = " + exp(pi));
 ```
 
 
-### 十一. 类
+## 十一. 类
 ###### classes
 
-#### 1.类定义
+### 1.类定义
 - 更直观，面向对象的风格和空模板的类。
 
  ```
@@ -651,7 +651,7 @@ Shape.prototype.move = function (x, y) {
 };
 ```
 
-#### 2.类继承
+### 2.类继承
 - 更直观，OOP风格和空模板继承。
 
  ```
@@ -685,7 +685,7 @@ Circle.prototype = Object.create(Shape.prototype);
 Circle.prototype.constructor = Circle;
 ```
 
-#### 3.表达式的类继承
+### 3.表达式的类继承
 - 通过扩展表达式来生成函数对象，从而支持mixin风格的继承。 [注意：当然，泛型聚合函数通常由像这样的库提供]
 
  ```
@@ -792,7 +792,7 @@ rect.setColor("red");
 console.log(rect.getX(), rect.getY(), rect.getZ(), rect.getColor());
 ```
 
-#### 4.基类访问
+### 4.基类访问
 - 直观地访问基类的构造函数和方法。
 
  ```
@@ -844,7 +844,7 @@ Circle.prototype.toString = function () {
 };
 ```
 
-#### 5.静态成员
+### 5.静态成员
 - 简单支持静态类成员。
 
  ```
@@ -880,7 +880,7 @@ var defRectangle = Rectangle.defaultRectangle();
 var defCircle    = Circle.defaultCircle();
 ```
 
-#### 6.getter / setter
+### 6.getter / setter
 - Getter / Setter也直接在类中（而不仅仅是在对象初始化器中，因为从ECMAScript 5.1开始是可能的）。
 
  ```
@@ -915,10 +915,10 @@ r.area === 1000;
 ```
 
 
-### 十二. 符号类型
+## 十二. 符号类型
 ###### symbol-type
 
-#### 1.符号类型
+### 1.符号类型
 - 唯一且不可变的数据类型将用作对象属性的标识符。符号可以有可选的描述，但仅用于调试目的。
 
  ```
@@ -939,7 +939,7 @@ Object.getOwnPropertySymbols(obj) // [ foo, bar ]
 // 在ES5中没有等价物
 ```
 
-#### 2.全局符号
+### 2.全局符号
 - 全局符号，通过唯一键索引。
 
  ```
@@ -963,9 +963,9 @@ Object.getOwnPropertySymbols(obj) // [ foo, bar ]
 ```
 
 
-### 十三. 迭代器
+## 十三. 迭代器
 ###### iterators
-#### 迭代器和For-Of运算符
+### 迭代器和For-Of运算符
 - 支持“迭代”协议，允许对象定制其迭代行为。 此外，支持“迭代器”协议来产生序列值（有限或无限）。 最后，为运算符提供一个方便的方法来遍历一个可迭代对象的所有值。
 ```
 let fibonacci = {
@@ -1006,10 +1006,10 @@ for (;;) {
 ```
 
 
-### 十四. 生成器
+## 十四. 生成器
 ###### generators
 
-#### 1.生成器函数，迭代器协议
+### 1.生成器函数，迭代器协议
 - 支持生成器，这是一个包含生成器函数的迭代器的特例，可以暂停和恢复控制流，以生成序列值（有限或无限）。
 ```
 let fibonacci = {
@@ -1048,7 +1048,7 @@ for (;;) {
 }
 ```
 
-#### 2.生成器函数，直接使用
+### 2.生成器函数，直接使用
 - 支持生成器函数，这是函数的一个特殊变体，可以暂停和恢复控制流，以生成序列值（有限或无限）。
 ```
 function* range (start, end, step) {
@@ -1076,7 +1076,7 @@ for (var i = 0; i < r.length; i++) {
 }
 ```
 
-#### 3.生成器匹配
+### 3.生成器匹配
 - 支持生成器函数，即可以暂停和恢复控制流的函数，以生成和传播值序列（有限或无限）。
 ```
 let fibonacci = function* (numbers) {
@@ -1095,7 +1095,7 @@ let [ n1, n2, n3, ...others ] = fibonacci(1000)
 //  在ES5中没有等价物
 ```
 
-#### 4.生成器控制流程
+### 4.生成器控制流程
 - 支持生成器，这是迭代器的一个特例，它可以暂停和恢复控制流，以支持与“Promises”（见下文）结合的“协同例程”风格的异步编程。 [注意：通用异步函数通常由可重用的库提供，并在此给出以便更好地理解。 在实践中看到co或Bluebird的协同程序。]
 ```
 //  通用异步控制流驱动程序
@@ -1146,7 +1146,7 @@ async(function* (greeting) {
 ```
 
 
-#### 5.生成器方法
+### 5.生成器方法
 - 基于生成器函数，支持生成器方法，即类和对象中的方法。
 ```
 class Clz {
@@ -1165,10 +1165,10 @@ let Obj = {
 ```
 
 
-### 十五. Map/Set & WeakMap/WeakSet
+## 十五. Map/Set & WeakMap/WeakSet
 ###### map-set-weak-map-weak-set
 
-#### 1.设置数据结构
+### 1.设置数据结构
 - 基于集合的常用算法的更清晰的数据结构。
 ```
 let s = new Set()
@@ -1188,7 +1188,7 @@ for (var key in s) // 任意的顺序
         console.log(s[key]);
 ```
 
-#### 2.map 数据结构
+### 2.map 数据结构
 - 基于 map 的常用算法的更清晰的数据结构。
 ```
 let m = new Map()
@@ -1215,7 +1215,7 @@ for (key in m) {
 }
 ```
 
-#### 3. 弱链数据结构
+### 3. 弱链数据结构
 - 无内存泄漏的Object-key'd并排数据结构。
 ```
 let isMarked = new WeakSet()
@@ -1246,7 +1246,7 @@ isMarked.has(foo) === false
 
 
 
-### 十六. 键入数组
+## 十六. 键入数组
 ###### typed-arrays
 - 支持任意字节数据结构来实现网络协议，密码算法，文件格式操作等。
 ```
@@ -1281,10 +1281,10 @@ example.amountDue = 42.0
 ```
 
 
-### 十七. 新的内置方法
+## 十七. 新的内置方法
 ###### new-built-in-methods
 
-#### 1.对象属性分配
+### 1.对象属性分配
 - 将一个或多个源对象的枚举属性分配到目标对象的新函数。
 ```
 var dest = { quux: 0 }
@@ -1312,7 +1312,7 @@ dest.bar  === 2;
 dest.baz  === 4;
 ```
 
-#### 2.数组元素查找
+### 2.数组元素查找
 - 在数组中查找元素的新功能。
 ```
 [ 1, 3, 4, 2 ].find(x => x > 3) // 4
@@ -1323,7 +1323,7 @@ dest.baz  === 4;
 // 在ES5中没有任何等价物
 ```
 
-#### 3.字符串重复
+### 3.字符串重复
 - 新的字符串重复功能。
 ```
 " ".repeat(4 * depth)
@@ -1443,10 +1443,10 @@ console.log(mathSign(NaN)) // NaN
 ```
 
 
-### 十八. Promises
+## 十八. Promises
 ###### promises
 
-#### 1.Promise 用法
+### 1.Promise 用法
 - 可以异步生成并在将来可用的值的第一类表示。
 ```
 function msgAfterTimeout (msg, who, timeout) {
@@ -1473,7 +1473,7 @@ msgAfterTimeout("", "Foo", 100, function (msg) {
 });
 ```
 
-#### 2.Promise 组合
+### 2.Promise 组合
 - 将一个或多个 Promise 组合成新的 Promise，而无需亲自处理底层异步操作的指令。
 ```
 function fetchAsync (url, timeout, onData, onError) {
@@ -1525,10 +1525,10 @@ fetchAll([
 ```
 
 
-### 十九. 元编程
+## 十九. 元编程
 ###### meta-programming
 
-#### 1.代理
+### 1.代理
 - 挂钩到运行时级别的对象元操作。
 ```
 let target = {
@@ -1546,7 +1546,7 @@ proxy.world === "Hello, world"
 // 在ES5中没有等价物
 ```
 
-#### 2.反射
+### 2.反射
 - 进行对应于对象元操作的调用。
 ```
 let obj = { a: 1 }
@@ -1561,10 +1561,10 @@ Object.defineProperty(obj, "b", { value: 2 });
 Object.getOwnPropertyNames(obj); // [ "a", "b" ]
 ```
 
-### 二十. 国际化与本土化
+## 二十. 国际化与本土化
 ###### internationalization-localization
 
-#### 1.整理
+### 1.整理
 - 排序一组字符串并在一组字符串中搜索。 整理由区域设置参数化并且了解Unicode。
 ```
 // 在德语中，“ä”与“a”
@@ -1581,7 +1581,7 @@ console.log(list.sort(l10nSV.compare)) // [ "a", "z", "ä" ]
 // 在ES5中没有等价物
 ```
 
-#### 2.数字格式
+### 2.数字格式
 - 使用数字分组和本地化分隔符格式化数字。
 ```
 var l10nEN = new Intl.NumberFormat("en-US")
@@ -1593,7 +1593,7 @@ l10nDE.format(1234567.89) === "1.234.567,89"
 // 在ES5中没有等价物
 ```
 
-#### 3.货币格式
+### 3.货币格式
 - 使用数字分组格式化数字，本地化分隔符和附加的货币符号。
 ```
 var l10nUSD = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" })
@@ -1607,7 +1607,7 @@ l10nEUR.format(100200300.40) === "100.200.300,40 €"
 // 在ES5中没有等价物
 ```
 
-#### 4.日期/时间格式
+### 4.日期/时间格式
 - 使用本地化排序和分隔符格式化日期/时间。
 ```
 var l10nEN = new Intl.DateTimeFormat("en-US")
